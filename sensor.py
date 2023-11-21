@@ -1,25 +1,22 @@
 import random
+import motor
+import watertank
 
 class FlowSensor:
-  def __init__(self):
-    self.value = 0
-    self.step = 0
+  def __init__(self, motor, watertank):
+    self.motor = motor
+    self.watertank = watertank
+
   def get_value(self):
-    # 스텝 5번이 지나기 전에는 기존 value 출력
-    if not self.step % 5 == 0:
-      self.step += 1;
-      # 유량이 없는 경우 그대로 출력
-      if self.value == 0:
-        return self.value
-      offset = random.randint(-1, 1)
-      return self.value + offset
-    else:
-      rand = random.randint(0, 100)
-      # 25% 확률로 유량 X
-      if rand < 30:
-        self.value = 0
-      else:
-        self.value = random.randint(0, 50)
-      
-      self.step += 1;
-      return self.value
+    if not self.motor.is_rotate():
+      return 0
+    if self.watertank.get_amount() == 0:
+      return 0
+
+    power = self.motor.get_power()
+    amount = self.watertank.get_amount()
+
+    if amount < power:
+      return power - amount;
+
+    return power
