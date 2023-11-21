@@ -21,36 +21,41 @@ class PIDController:
         output = max(0, min(output, 50))
         return int(output)
 
-# 예시 파라미터
-kp, ki, kd = 2.0, 0.2, 0.05
-pid = PIDController(kp, ki, kd)
+    @staticmethod
+    def run_PID(input_flows):
+        # 예시 파라미터
+        kp, ki, kd = 2.0, 0.2, 0.05
+        setpoint = 150  # 목표 총량을 150으로 설정
+        total = 150  # 초기 총량
+        min_total = 100
 
-setpoint = 150  # 목표 총량을 150으로 설정
+        pid = PIDController(kp, ki, kd)
+        output_flows = []
+        # for i in range(50):
+        #     input_flows.append(sensor.FlowSensor().get_value())
+        print(input_flows)
+        for input_flow in input_flows:
+            # 입력 유량에 따라 total 업데이트
+            total += input_flow
 
-total = 150  # 초기 총량
-# input_flows = [random.randint(20, 40) for _ in range(10)]  # 입력 유량의 예시 시퀀스
-input_flows = []
-output_flows = []
-# for i in range(50):
-#     input_flows.append(sensor.FlowSensor().get_value())
-for i in range(50):
-    input_flows.append(random.randint(0, 30))
+            # PID 컨트롤러를 이용하여 total 조정
+            output_flow = pid.update(setpoint, total)
 
-print(input_flows)
-for input_flow in input_flows:
-    # 입력 유량에 따라 total 업데이트
-    total += input_flow
+            if total - output_flow <= min_total:
+                output_flow = 0
+            # 출력 유량을 이용하여 total 조정
+            total -= output_flow
 
-    # PID 컨트롤러를 이용하여 total 조정
-    output_flow = pid.update(setpoint, total)
+            print(f"Input: {input_flow}, Current Total: {total}, Output Flow: {output_flow}")
+            output_flows.append(output_flow)
 
-    if total - output_flow <= 100:
-        output_flow = 0
-    # 출력 유량을 이용하여 total 조정
-    total -= output_flow
+        print(input_flows)
+        print(output_flows)
+        return output_flows
 
-    print(f"Input: {input_flow}, Total: {total}, Output Flow: {output_flow}")
-    output_flows.append(output_flow)
 
-print(input_flows)
-print(output_flows)
+
+
+
+
+
