@@ -36,7 +36,7 @@ class PIDController:
         print(input_flows)
         for input_flow in input_flows:
             # 입력 유량에 따라 total 업데이트
-            total += input_flow
+            total += int(input_flow)
 
             # PID 컨트롤러를 이용하여 total 조정
             output_flow = pid.update(setpoint, total)

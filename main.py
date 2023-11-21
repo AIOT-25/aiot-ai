@@ -2,11 +2,16 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
+from PID_test import PIDController
+
+
 
 # 데이터 준비 (예시 데이터, 실제 데이터로 대체 필요)
 # input_flows: 입력 유량, output_flows: 출력 유량
-input_flows = np.random.rand(1000) * 100  # 임의의 입력 유량 데이터
-output_flows = np.random.rand(1000) * 50  # 임의의 출력 유량 데이터 (실제 데이터로 대체 필요)
+input_flows = np.random.rand(30) * 50  # 임의의 입력 유량 데이터
+output_flows = PIDController.run_PID(input_flows)
+
+# output_flows = np.random.rand(1000) * 50  # 임의의 출력 유량 데이터 (실제 데이터로 대체 필요)
 
 # 데이터 전처리
 # 데이터 형태를 LSTM에 맞게 조정
@@ -30,8 +35,9 @@ model.compile(optimizer='adam', loss='mean_squared_error')
 model.fit(X, y, epochs=20, batch_size=32, validation_split=0.2)
 
 # 예측 (새로운 데이터에 대한 예측)
-new_input_flow = np.array([50, 55, 60, 65, 70, 75, 80, 85, 90, 95])  # 새로운 입력 유량 데이터
+new_input_flow = np.array([20, 15, 20, 17, 27, 7, 38, 45, 29, 32])  # 새로운 입력 유량 데이터
 new_input_flow = new_input_flow.reshape((1, time_steps, 1))
 predicted_output_flow = model.predict(new_input_flow)
 
 print("Predicted Output Flow:", predicted_output_flow[0][0])
+model.save('./my_model')
