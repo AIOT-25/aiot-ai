@@ -1,5 +1,3 @@
-import random
-
 class PIDController:
     def __init__(self, kp, ki, kd):
         self.kp = kp
@@ -14,15 +12,17 @@ class PIDController:
         derivative = error - self.previous_error
         output = self.kp * error + self.ki * self.integral + self.kd * derivative
         self.previous_error = error
+        # 출력 유량을 0과 50 사이로 제한
+        if output < 0:
+            output = output * - 1
+        output = max(0, min(output, 50))
         return output
 
 # 예시 파라미터
 kp, ki, kd = 2.0, 0.2, 0.05
 pid = PIDController(kp, ki, kd)
 
-min_total = 100  # 최소 총량
-max_total = 300  # 최대 총량
-setpoint = (min_total + max_total) / 2  # 목표 총량을 최소와 최대의 중간값으로 설정
+setpoint = 150  # 목표 총량을 150으로 설정
 
 total = 150  # 초기 총량
 input_flows = [random.randint(20, 40) for _ in range(10)]  # 입력 유량의 예시 시퀀스
@@ -37,7 +37,4 @@ for input_flow in input_flows:
     # 출력 유량을 이용하여 total 조정
     total -= output_flow
 
-    # total을 최소 및 최대 총량 사이로 제한
-    total = max(min_total, min(total, max_total))
-
-    print(f"intput: {input_flow} Total: {total}, Output Flow: {output_flow}")
+    print(f"Input: {input_flow}, Total: {total}, Output Flow: {output_flow}")
