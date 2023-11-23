@@ -18,22 +18,22 @@ class PIDController:
         # 출력 유량을 0과 50 사이로 제한
         if output < 0:
             output = output * - 1
-        output = max(0, min(output, 50))
+        output = max(0, min(output, 26))
         return int(output)
 
     @staticmethod
     def run_PID(input_flows):
         # 예시 파라미터
-        kp, ki, kd = 2.0, 0.2, 0.05
-        setpoint = 150  # 목표 총량을 150으로 설정
-        total = 150  # 초기 총량
-        min_total = 100
+        kp, ki, kd = 0.2, 0.05, 0.15
+        setpoint = 300  # 목표 총량을 150으로 설정
+        total = 300  # 초기 총량
+        min_total = 270
 
         pid = PIDController(kp, ki, kd)
         output_flows = []
         # for i in range(50):
         #     input_flows.append(sensor.FlowSensor().get_value())
-        print(input_flows)
+        # print(input_flows)
         for input_flow in input_flows:
             # 입력 유량에 따라 total 업데이트
             total += int(input_flow)
@@ -46,16 +46,9 @@ class PIDController:
             # 출력 유량을 이용하여 total 조정
             total -= output_flow
 
-            print(f"Input: {input_flow}, Current Total: {total}, Output Flow: {output_flow}")
+            # print(f"Input: {input_flow}, Current Total: {total}, Output Flow: {output_flow}")
             output_flows.append(output_flow)
 
-        print(input_flows)
-        print(output_flows)
+        # print(input_flows)
+        # print(output_flows)
         return output_flows
-
-
-
-
-
-
-
